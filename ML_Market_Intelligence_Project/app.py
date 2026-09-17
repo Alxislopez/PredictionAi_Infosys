@@ -138,33 +138,70 @@ with tab2:
     st.metric("Feasibility Score", f"{feasibility_score}%")
     st.write("Feasibility is calculated automatically based on the Overall Risk Score and the balance of SWOT factors.")
 
+from recommendations_agent import run_agent
+import time
+
 # ----------------- TAB 3: RECOMMENDATIONS -----------------
 with tab3:
-    st.header("Final Recommendation")
+    st.header("Recommendations & Strategic Reasoning")
+    st.caption("AI-powered mitigation strategies and agent workflows")
+    st.write("---")
     
-    if feasibility_score >= 80:
-        recommendation = "Highly Feasible"
-        st.success(f"### {recommendation}")
-        st.write("The project shows high feasibility with manageable risks and strong market potential.")
-    elif feasibility_score >= 60:
-        recommendation = "Feasible"
-        st.info(f"### {recommendation}")
-        st.write("The project is feasible but has some risks. Please review the Weaknesses and Threats in the SWOT analysis.")
-    elif feasibility_score >= 40:
-        recommendation = "Moderately Feasible"
-        st.warning(f"### {recommendation}")
-        st.write("The project has moderate to high risks. Develop a mitigation plan before proceeding.")
-    else:
-        recommendation = "Not Feasible"
-        st.error(f"### {recommendation}")
-        st.write("The project's risks outweigh its strengths. It is highly recommended to pivot or re-evaluate the core business model before proceeding.")
+    # We need a button or an automatic trigger to run the agent
+    if "agent_result" not in st.session_state:
+        st.session_state.agent_result = None
+
+    if st.button("Generate Strategic Recommendations"):
+        with st.spinner("LangGraph Agent is analyzing risks and generating recommendations..."):
+            # Prepare inputs
+            project_data = {} # In a real app, pull from Tab 1
+            risk_data = five_risks
+            swot_data = swot
+            
+            st.session_state.agent_result = run_agent(project_data, risk_data, swot_data)
+            
+    if st.session_state.agent_result:
+        res = st.session_state.agent_result
         
-    st.divider()
-    st.subheader("Key Factors Driving This Recommendation")
-    st.write(f"- **Feasibility Score:** {feasibility_score}%")
-    st.write(f"- **Overall Risk:** {risk_status} ({risk_score:.1f}/5)")
-    st.write(f"- **Key Strengths/Opportunities:** {len(swot['Strengths']) + len(swot['Opportunities'])} factors")
-    st.write(f"- **Key Weaknesses/Threats:** {len(swot['Weaknesses']) + len(swot['Threats'])} factors")
+        # Sub-tabs for the extensive data
+        tab_rec, tab_mit, tab_imp, tab_rep, tab_flow = st.tabs([
+            "Recommendations", "Mitigation Strategies", "Improvements", "Final Report", "Workflow"
+        ])
+        
+        with tab_rec:
+            st.subheader("Strategic Recommendations")
+            for rec in res.get("recommendations", []):
+                with st.expander(f"{rec.get('priority', '')} | {rec.get('title', '')}"):
+                    st.caption(f"Category: {rec.get('category', '')}")
+                    st.write(rec.get("description", ""))
+                    
+        with tab_mit:
+            st.subheader("Risk Mitigations")
+            for mit in res.get("mitigations", []):
+                with st.expander(f"{mit.get('risk_name', 'Risk')} ({mit.get('impact', 'Medium Impact')})"):
+                    st.write(f"**Category:** {mit.get('category', '')}")
+                    st.write(f"**Problem:** {mit.get('description', '')}")
+                    st.write(f"**Strategy:** {mit.get('mitigation_strategy', '')}")
+                    st.info(f"Preventive: {mit.get('preventive_action', '')}")
+                    st.warning(f"Contingency: {mit.get('contingency_action', '')}")
+                    
+        with tab_imp:
+            st.subheader("Improvement Suggestions")
+            for imp in res.get("improvements", []):
+                with st.container(border=True):
+                    st.write(f"**{imp.get('category', '')}**: {imp.get('improvement', '')}")
+                    st.caption(f"Reason: {imp.get('reason', '')} | Benefit: {imp.get('expected_benefit', '')}")
+                    
+        with tab_rep:
+            st.subheader("Final Strategic Assessment")
+            st.write(res.get("final_response", ""))
+            
+        with tab_flow:
+            st.subheader("LangGraph Execution Timeline")
+            for step in res.get("workflow_steps", []):
+                st.write(f"{step.get('icon', '')} **{step.get('name', '')}** - {step.get('desc', '')}")
+                st.write("↓")
+
 
 # ----------------- TAB 4: DASHBOARD -----------------
 with tab4:
