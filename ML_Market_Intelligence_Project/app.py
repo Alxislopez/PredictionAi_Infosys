@@ -168,10 +168,11 @@ div[data-baseweb="select"] div[class*="placeholder"] {
   border-color: var(--red) !important;
   box-shadow: 0 0 0 3px rgba(255, 0, 85, 0.2) !important;
 }
-div[data-baseweb="select"], div[data-baseweb="select"] * { background-color: transparent !important; color: #ffffff !important; }
-div[data-baseweb="popover"], div[data-baseweb="popover"] > div, ul[role="listbox"] { background-color: var(--red) !important; border-radius: 8px !important; }
-ul[role="listbox"] li, ul[role="listbox"] li * { color: #000000 !important; background-color: transparent !important; }
-ul[role="listbox"] li:hover, ul[role="listbox"] li[aria-selected="true"], ul[role="listbox"] li:hover * { background-color: rgba(0, 0, 0, 0.15) !important; color: #000000 !important; font-weight: 600 !important; }
+div[data-baseweb="select"] > div { background-color: transparent !important; color: #ffffff !important; }
+div[data-baseweb="select"] span { color: #ffffff !important; }
+div[data-baseweb="popover"], div[data-baseweb="popover"] > div, div[data-baseweb="popover"] ul { background-color: #000000 !important; border: 1px solid #333333 !important; }
+div[data-baseweb="popover"] li, div[data-baseweb="popover"] li span, div[data-baseweb="popover"] li div { background-color: transparent !important; color: #ffffff !important; }
+div[data-baseweb="popover"] li:hover, div[data-baseweb="popover"] li:hover span, div[data-baseweb="popover"] li:hover div, div[data-baseweb="popover"] li[aria-selected="true"] { background-color: #222222 !important; color: var(--red) !important; }
 label[data-testid="stWidgetLabel"] p { font-size: 12.5px !important; font-weight: 500 !important; color: var(--text-2) !important; }
 
 /* ── Progress bar ── */
