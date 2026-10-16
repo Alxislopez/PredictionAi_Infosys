@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 Alxislopez
+
 import streamlit as st
 import matplotlib.pyplot as plt
 from database import get_supabase_client
